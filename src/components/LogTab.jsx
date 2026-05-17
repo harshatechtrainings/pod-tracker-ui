@@ -133,6 +133,7 @@ export default function LogTab({ date, entries, loading, onEntryAdded, onEntryDe
             />
           </div>
           <div className="sw-controls">
+            {swRunning && <span className="sw-pulse-dot" />}
             <span className="sw-timer" style={{ color: swRunning ? '#E24B4A' : 'var(--text-secondary)' }}>
               {fmtSeconds(swSeconds)}
             </span>
@@ -204,11 +205,19 @@ export default function LogTab({ date, entries, loading, onEntryAdded, onEntryDe
         {loading ? (
           <div className="loading">Loading…</div>
         ) : entries.length === 0 ? (
-          <div className="empty-state">No entries yet. Start the stopwatch or add manually.</div>
+          <div className="empty-state">
+            <div className="empty-icon">📋</div>
+            <div className="empty-title">Nothing logged yet</div>
+            <div className="empty-sub">Start the stopwatch above or use "Add Manually" to record your first entry</div>
+          </div>
         ) : (
           <div className="entry-list">
             {entries.map(entry => (
-              <div key={entry._id} className="entry-card">
+              <div
+                key={entry._id}
+                className="entry-card"
+                style={{ borderLeftColor: TYPE_COLORS[entry.type] }}
+              >
                 <div className="entry-left">
                   <span
                     className="type-badge"

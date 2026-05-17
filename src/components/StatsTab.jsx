@@ -126,19 +126,23 @@ export default function StatsTab() {
 
       {/* ── Summary cards ─────────────────────────────────── */}
       <div className="stat-grid">
-        <div className="stat-card">
+        <div className="stat-card" style={{ '--card-accent': 'var(--accent)' }}>
+          <div className="stat-card-icon">⏱</div>
           <div className="stat-label">All-Time Logged</div>
           <div className="stat-value">{fmtMins(allTotal)}</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ '--card-accent': 'var(--color-review)' }}>
+          <div className="stat-card-icon">🎯</div>
           <div className="stat-label">Productive %</div>
           <div className="stat-value" style={{ color: 'var(--color-review)' }}>{productivePct}%</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ '--card-accent': 'var(--color-meeting)' }}>
+          <div className="stat-card-icon">📊</div>
           <div className="stat-label">Avg / Day</div>
           <div className="stat-value">{fmtMins(avgMins)}</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ '--card-accent': topType?.mins > 0 ? TYPE_COLORS[topType.type] : 'var(--accent)' }}>
+          <div className="stat-card-icon">🏆</div>
           <div className="stat-label">Top Type</div>
           <div
             className="stat-value"

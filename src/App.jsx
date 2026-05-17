@@ -10,14 +10,18 @@ import { formatDateDisplay, todayStr } from './utils/time';
 
 export default function App() {
   const { isAuthenticated, user, logout } = useAuth();
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('wt_dark') === '1');
 
-  // Show auth page if not logged in
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('wt_dark', darkMode ? '1' : '0');
+  }, [darkMode]);
+
   if (!isAuthenticated) return <AuthPage />;
-
-  return <AppShell user={user} onLogout={logout} />;
+  return <AppShell user={user} onLogout={logout} darkMode={darkMode} onToggleDark={() => setDarkMode(d => !d)} />
 }
 
-function AppShell({ user, onLogout }) {
+function AppShell({ user, onLogout, darkMode, onToggleDark }) {
   const [activeTab, setActiveTab] = useState('log');
   const [currentDate, setCurrentDate] = useState(todayStr());
   const [entries, setEntries] = useState([]);
@@ -84,6 +88,14 @@ function AppShell({ user, onLogout }) {
           <div className="header-user">
             <div className="user-avatar">{user?.name?.[0]?.toUpperCase() ?? '?'}</div>
             <span className="user-name">{user?.name}</span>
+            <button
+              className="icon-btn theme-btn"
+              onClick={onToggleDark}
+              title={darkMode ? 'Light mode' : 'Dark mode'}
+              aria-label="Toggle theme"
+            >
+              {darkMode ? '☀' : '🌙'}
+            </button>
             <button className="btn btn-ghost logout-btn" onClick={onLogout}>Sign out</button>
           </div>
         </div>

@@ -24,19 +24,23 @@ export default function DayViewTab({ entries, loading, onEntryEdit }) {
 
       {/* ── Summary cards ───────────────────────────────────── */}
       <div className="stat-grid">
-        <div className="stat-card">
+        <div className="stat-card" style={{ '--card-accent': 'var(--accent)' }}>
+          <div className="stat-card-icon">⏰</div>
           <div className="stat-label">Total Logged</div>
           <div className="stat-value">{fmtMins(totalMins)}</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ '--card-accent': 'var(--color-review)' }}>
+          <div className="stat-card-icon">⚡</div>
           <div className="stat-label">Productive</div>
           <div className="stat-value" style={{ color: 'var(--color-review)' }}>{fmtMins(productiveMins)}</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ '--card-accent': 'var(--color-break)' }}>
+          <div className="stat-card-icon">☕</div>
           <div className="stat-label">Breaks</div>
           <div className="stat-value" style={{ color: 'var(--color-break)' }}>{fmtMins(breakMins)}</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ '--card-accent': 'var(--color-task)' }}>
+          <div className="stat-card-icon">📝</div>
           <div className="stat-label">Entries</div>
           <div className="stat-value">{entries.length}</div>
         </div>
@@ -45,7 +49,11 @@ export default function DayViewTab({ entries, loading, onEntryEdit }) {
       {loading ? (
         <div className="loading">Loading…</div>
       ) : entries.length === 0 ? (
-        <div className="empty-state">No entries for this day.</div>
+        <div className="empty-state">
+          <div className="empty-icon">📅</div>
+          <div className="empty-title">No entries for this day</div>
+          <div className="empty-sub">Switch to the Log tab to track time for this date</div>
+        </div>
       ) : (
         <>
           {/* ── Timeline bar ─────────────────────────────────── */}
@@ -102,7 +110,11 @@ export default function DayViewTab({ entries, loading, onEntryEdit }) {
             <h2 className="panel-title">All Entries</h2>
             <div className="entry-list">
               {entries.map(entry => (
-                <div key={entry._id} className="entry-card">
+                <div
+                  key={entry._id}
+                  className="entry-card"
+                  style={{ borderLeftColor: TYPE_COLORS[entry.type] }}
+                >
                   <div className="entry-left">
                     <span
                       className="type-badge"

@@ -4,6 +4,7 @@ import AuthPage from './pages/AuthPage';
 import LogTab from './components/LogTab';
 import DayViewTab from './components/DayViewTab';
 import StatsTab from './components/StatsTab';
+import TodosTab from './components/TodosTab';
 import EditModal from './components/EditModal';
 import { getEntriesByDate } from './api/entries';
 import { formatDateDisplay, todayStr } from './utils/time';
@@ -45,16 +46,24 @@ function AppShell({ user, onLogout, darkMode, onToggleDark }) {
     loadEntries();
   }, [loadEntries]);
 
+  function fmtLocal(d) {
+    return [
+      d.getFullYear(),
+      String(d.getMonth() + 1).padStart(2, '0'),
+      String(d.getDate()).padStart(2, '0'),
+    ].join('-');
+  }
+
   function prevDay() {
     const d = new Date(currentDate + 'T00:00:00');
     d.setDate(d.getDate() - 1);
-    setCurrentDate(d.toISOString().slice(0, 10));
+    setCurrentDate(fmtLocal(d));
   }
 
   function nextDay() {
     const d = new Date(currentDate + 'T00:00:00');
     d.setDate(d.getDate() + 1);
-    setCurrentDate(d.toISOString().slice(0, 10));
+    setCurrentDate(fmtLocal(d));
   }
 
   function goToday() {
@@ -74,6 +83,7 @@ function AppShell({ user, onLogout, darkMode, onToggleDark }) {
             {[
               { key: 'log',   label: 'Log' },
               { key: 'day',   label: 'Day View' },
+              { key: 'todos', label: 'Todos' },
               { key: 'stats', label: 'Stats' },
             ].map(({ key, label }) => (
               <button
@@ -101,8 +111,8 @@ function AppShell({ user, onLogout, darkMode, onToggleDark }) {
         </div>
       </header>
 
-      {/* ── Date Navigation (hidden on Stats) ─────────────── */}
-      {activeTab !== 'stats' && (
+      {/* ── Date Navigation (hidden on Stats and Todos) ─────── */}
+      {activeTab !== 'stats' && activeTab !== 'todos' && (
         <div className="date-nav">
           <button className="icon-btn" onClick={prevDay} aria-label="Previous day">‹</button>
           <span className="date-label">{formatDateDisplay(currentDate)}</span>
@@ -136,6 +146,7 @@ function AppShell({ user, onLogout, darkMode, onToggleDark }) {
             onEntryEdit={setEditingEntry}
           />
         )}
+        {activeTab === 'todos' && <TodosTab />}
         {activeTab === 'stats' && <StatsTab />}
       </main>
 

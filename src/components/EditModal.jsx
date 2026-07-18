@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { updateEntry } from '../api/entries';
 import { TYPE_LABELS, ALL_TYPES } from '../utils/colors';
+import { validateEntryForm } from '../utils/validation';
 
 export default function EditModal({ entry, onClose, onSaved }) {
   const [task,   setTask]   = useState(entry.task   || '');
@@ -14,8 +15,8 @@ export default function EditModal({ entry, onClose, onSaved }) {
 
   async function handleSave(e) {
     e.preventDefault();
-    if (!task.trim())              { setError('Task name is required'); return; }
-    if (!mins || Number(mins) < 1) { setError('Duration must be at least 1 minute'); return; }
+    const validationError = validateEntryForm({ task, mins });
+    if (validationError) { setError(validationError); return; }
     setError('');
     setSaving(true);
     try {

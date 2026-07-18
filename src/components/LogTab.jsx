@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createEntry, deleteEntry } from '../api/entries';
 import { fmtMins, fmtSeconds } from '../utils/time';
 import { TYPE_COLORS, TYPE_LABELS, ALL_TYPES } from '../utils/colors';
+import { validateEntryForm } from '../utils/validation';
 
 export default function LogTab({ date, entries, loading, onEntryAdded, onEntryDeleted, onEntryEdit }) {
   // ── Stopwatch ──────────────────────────────────────────────
@@ -28,6 +29,7 @@ export default function LogTab({ date, entries, loading, onEntryAdded, onEntryDe
 
   // ── Delete ─────────────────────────────────────────────────
   const [deletingId, setDeletingId] = useState(null);
+  const [deleteError, setDeleteError] = useState('');
 
   // Stop stopwatch when date changes
   useEffect(() => {
@@ -76,8 +78,8 @@ export default function LogTab({ date, entries, loading, onEntryAdded, onEntryDe
 
   async function handleManualSubmit(e) {
     e.preventDefault();
-    if (!mTask.trim())             { setMError('Task name is required'); return; }
-    if (!mMins || Number(mMins) < 1) { setMError('Duration must be at least 1 minute'); return; }
+    const validationError = validateEntryForm({ task: mTask, mins: mMins });
+    if (validationError) { setMError(validationError); return; }
     setMError('');
     setMSaving(true);
     try {
@@ -94,11 +96,12 @@ export default function LogTab({ date, entries, loading, onEntryAdded, onEntryDe
 
   async function handleDelete(id) {
     setDeletingId(id);
+    setDeleteError('');
     try {
       await deleteEntry(id);
       onEntryDeleted();
-    } catch {
-      // silently ignore; entry list will refresh
+    } catch (e) {
+      setDeleteError(e.message || 'Failed to delete entry');
     } finally {
       setDeletingId(null);
     }
@@ -202,6 +205,7 @@ export default function LogTab({ date, entries, loading, onEntryAdded, onEntryDe
       {/* ── Entries list ────────────────────────────────────── */}
       <section>
         <h3 className="section-title">{entries.length} {entries.length === 1 ? 'entry' : 'entries'} logged</h3>
+        {deleteError && <p className="field-error">⚠ {deleteError}</p>}
         {loading ? (
           <div className="loading">Loading…</div>
         ) : entries.length === 0 ? (

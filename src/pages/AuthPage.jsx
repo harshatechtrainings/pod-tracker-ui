@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { login as apiLogin, signup as apiSignup } from '../api/auth';
+import { validateSignupForm } from '../utils/validation';
 
 export default function AuthPage() {
   const { login } = useAuth();
@@ -16,9 +17,8 @@ export default function AuthPage() {
     e.preventDefault();
     setError('');
     if (mode === 'signup') {
-      if (!name.trim())         { setError('Full name is required'); return; }
-      if (password.length < 8)  { setError('Password must be at least 8 characters'); return; }
-      if (password !== confirm) { setError('Passwords do not match'); return; }
+      const validationError = validateSignupForm({ name, password, confirm });
+      if (validationError) { setError(validationError); return; }
     }
     setLoading(true);
     try {

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { TYPE_LABELS, ALL_TYPES } from '../utils/colors';
 import { createEntry } from '../api/entries';
 import { todayStr } from '../utils/time';
+import { validateEntryForm } from '../utils/validation';
 
 const STORAGE_KEY = 'wt_todos';
 
@@ -173,8 +174,8 @@ function TodoCompleteModal({ todo, onSaved, onSkip, onClose }) {
 
   async function handleSave(e) {
     e.preventDefault();
-    if (!task.trim())              { setError('Task name is required'); return; }
-    if (!mins || Number(mins) < 1) { setError('Duration must be at least 1 minute'); return; }
+    const validationError = validateEntryForm({ task, mins });
+    if (validationError) { setError(validationError); return; }
     setError('');
     setSaving(true);
     try {
